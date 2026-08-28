@@ -27,12 +27,12 @@
     --radius: 14px;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
-  html,body{margin:0;padding:0;}
+  html,body{margin:0;padding:0; overflow-x:hidden; max-width:100vw; }
   body{
     background:var(--bg);
     color:var(--text);
     font-family:'Montserrat',sans-serif;
-    padding-bottom: 84px;
+    padding-bottom: 150px;
     min-height:100vh;
   }
   h1,h2,h3,.display{
@@ -46,21 +46,12 @@
   header.top{
     padding:22px 18px 14px;
     position:sticky; top:0; z-index:5;
-    background:linear-gradient(180deg, var(--bg) 70%, rgba(28,25,23,0));
+    background:linear-gradient(180deg, var(--bg) 78%, rgba(28,25,23,0));
   }
   header.top .brand{
-    font-size:13px; color:var(--text-dim); letter-spacing:0.18em; margin-bottom:2px;
+    font-size:13px; color:var(--text-dim); letter-spacing:0.16em; margin-bottom:2px;
   }
-  header.top h1{ font-size:30px; }
-  .streak-row{
-    display:flex; align-items:center; gap:10px; margin-top:10px;
-  }
-  .plates{ display:flex; align-items:flex-end; gap:3px; height:18px; }
-  .plates .plate{
-    width:6px; border-radius:2px 2px 0 0; background:var(--gold);
-  }
-  .streak-label{ font-size:13px; color:var(--text-dim); }
-  .streak-label b{ color:var(--gold); font-family:'Montserrat',sans-serif; }
+  header.top h1{ font-size:29px; }
 
   main{ padding:0 16px; max-width:560px; margin:0 auto; }
   .card{
@@ -71,11 +62,14 @@
     margin-bottom:14px;
   }
   .card.highlight{ border-color: rgba(201,161,90,0.35); background: linear-gradient(160deg, rgba(201,161,90,0.10), var(--surface)); }
-  .row{ display:flex; gap:10px; }
-  .row > *{ flex:1; }
+  .row{ display:flex; gap:10px; min-width:0; }
+  .row > *{ flex:1; min-width:0; }
 
   select, input[type=text], input[type=number], input[type=date]{
     width:100%;
+    max-width:100%;
+    min-width:0;
+    box-sizing:border-box;
     background:var(--surface-2);
     border:1px solid var(--line);
     color:var(--text);
@@ -97,7 +91,7 @@
   }
   .date-human{ font-size:12.5px; color:var(--text-dim); margin:-8px 0 12px; text-transform:capitalize; }
 
-  .day-pill-row{ display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; margin-bottom:14px; }
+  .day-pill-row{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
   .day-pill{
     flex:0 0 auto; padding:8px 14px; border-radius:20px; font-size:13px; font-weight:600;
     border:1px solid var(--line); color:var(--text-dim); background:var(--surface); white-space:nowrap;
@@ -112,13 +106,22 @@
   .tag.strength{ background:var(--strength-dim); color:#f2b8a8; }
   .tag.hybrid{ background:var(--hybrid-dim); color:#a9ded4; }
   .day-meta{ font-size:12.5px; color:var(--text-dim); margin-bottom:14px; }
+  .warmup{ margin-bottom:16px; background:var(--surface-2); border:1px solid var(--line); border-radius:11px; padding:10px 12px; }
+  .warmup summary{ font-size:12.5px; font-weight:600; color:var(--text); cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; }
+  .warmup summary::-webkit-details-marker{ display:none; }
+  .warmup summary::after{ content:'+'; color:var(--gold); font-size:16px; }
+  .warmup[open] summary::after{ content:'−'; }
+  .warmup ul{ margin:10px 0 2px; padding-left:18px; }
+  .warmup li{ font-size:12.5px; color:var(--text-dim); margin-bottom:6px; line-height:1.4; }
+  .day-notes{ margin-top:6px; font-size:12.5px; color:var(--gold); background:rgba(201,161,90,0.08); border-radius:10px; padding:10px 12px; line-height:1.4; }
 
   .exercise{ padding:12px 0; border-top:1px solid var(--line); }
   .exercise:first-child{ border-top:none; padding-top:0; }
   .exercise-name{ font-size:15px; font-weight:600; margin-bottom:2px; display:flex; align-items:center; gap:6px; }
   .exercise-target{ font-size:12px; color:var(--text-dim); margin-bottom:10px; }
   .set-row{ display:flex; align-items:center; gap:8px; margin-bottom:7px; }
-  .set-row .set-idx{ width:18px; font-size:12px; color:var(--text-dim); font-family:'Montserrat',sans-serif; }
+  .set-row .set-idx{ width:18px; flex:0 0 auto; font-size:12px; color:var(--text-dim); font-family:'Montserrat',sans-serif; }
+  .set-row input{ flex:1; min-width:0; width:auto; }
   .prev-hint{ font-size:10.5px; color:#6b6259; margin-top:-4px; margin-bottom:6px;}
   .pr-chip{ font-size:9.5px; font-weight:700; color:#1c1917; background:var(--gold); padding:2px 6px; border-radius:5px; letter-spacing:0.03em; }
 
@@ -132,7 +135,6 @@
   .btn.teal{ background:var(--hybrid); color:#0f2b27; }
 
   nav.tabbar{
-    position:fixed; bottom:0; left:0; right:0; z-index:10;
     display:flex; background:var(--surface); border-top:1px solid var(--line);
     padding-bottom: env(safe-area-inset-bottom);
   }
@@ -202,17 +204,29 @@
   .pr-title{ font-family:'Montserrat',sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:0.03em; color:#1c1917; font-size:14px; }
   .pr-list{ font-size:12.5px; color:#3a2f1e; margin-top:2px; }
 
-  /* rest timer */
-  .rest-fab{
-    position:fixed; right:16px; bottom:92px; z-index:20;
-    width:58px; height:58px; border-radius:50%; border:none;
-    background:var(--surface); border:1px solid var(--line);
-    color:var(--gold); font-size:22px; display:flex; align-items:center; justify-content:center;
-    box-shadow:0 8px 20px rgba(0,0,0,0.35);
-    font-family:'Montserrat',sans-serif; font-weight:700;
+  /* rest timer: barra anclada en el dock inferior, nunca se solapa con el contenido */
+  .bottom-dock{
+    position:fixed; left:0; right:0; bottom:0; z-index:20;
+    display:flex; flex-direction:column;
   }
-  .rest-fab.running{ background:var(--gold); color:#1c1917; font-size:13px; animation: fab-pulse 1.6s ease infinite; }
-  @keyframes fab-pulse{ 0%,100%{ box-shadow:0 8px 20px rgba(201,161,90,0.25);} 50%{ box-shadow:0 8px 28px rgba(201,161,90,0.55);} }
+  .rest-bar{
+    margin:0 12px 8px; background:var(--surface); border:1px solid var(--line);
+    border-radius:16px; padding:10px 12px; display:flex; align-items:center; gap:11px;
+    box-shadow:0 10px 24px rgba(0,0,0,0.4); position:relative; overflow:hidden;
+    text-align:left;
+  }
+  .rest-bar .ic-wrap{
+    flex:0 0 auto; width:36px; height:36px; border-radius:50%; background:var(--surface-2);
+    display:flex; align-items:center; justify-content:center; font-size:16px; color:var(--gold);
+    transition: background .3s, color .3s;
+  }
+  .rest-bar.running .ic-wrap{ background:var(--gold); color:#1c1917; }
+  .rest-bar .info{ flex:1; min-width:0; }
+  .rest-bar .info .label{ font-size:10.5px; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim); }
+  .rest-bar .info .value{ font-size:14.5px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .rest-bar .chev{ color:var(--text-dim); font-size:14px; flex:0 0 auto; }
+  .rest-bar .progress-track{ position:absolute; left:0; bottom:0; height:3px; width:100%; background:rgba(239,234,226,0.06); }
+  .rest-bar .progress-fill{ position:absolute; left:0; bottom:0; height:3px; width:0%; background:var(--hybrid); transition:width 1s linear, background .3s; }
 
   .timer-overlay{
     position:fixed; inset:0; background:rgba(15,13,12,0.82); backdrop-filter:blur(6px);
@@ -258,10 +272,6 @@
 <header class="top">
   <div class="brand">CUADERNO · SEMANA DE 5 DÍAS</div>
   <h1>Entrenamiento</h1>
-  <div class="streak-row">
-    <div class="plates" id="plates"></div>
-    <div class="streak-label">Racha: <b id="streakNum">0</b> sesiones seguidas</div>
-  </div>
 </header>
 
 <main>
@@ -371,6 +381,10 @@
   <!-- DATOS / EXPORTAR -->
   <section class="tabview" id="tab-datos">
     <div class="card">
+      <div class="section-title">Notas generales del programa</div>
+      <div id="generalNotesList"></div>
+    </div>
+    <div class="card">
       <div class="section-title">Exportar para analizar</div>
       <p style="font-size:13px; color:var(--text-dim); margin-top:0;">Genera un resumen de todos tus datos (progresión, cardio, peso). Cópialo y pégalo en un chat con Claude para que lo analice.</p>
       <button class="btn teal" id="genSummaryBtn" style="margin-bottom:10px;">Generar resumen</button>
@@ -390,7 +404,25 @@
 
 </main>
 
-<button class="rest-fab" id="restFab">⏱</button>
+<div class="bottom-dock">
+  <button class="rest-bar" id="restBar">
+    <div class="ic-wrap">⏱</div>
+    <div class="info">
+      <div class="label">Descanso</div>
+      <div class="value" id="restBarValue">Toca para iniciar</div>
+    </div>
+    <div class="chev">›</div>
+    <div class="progress-track"></div>
+    <div class="progress-fill" id="restBarFill"></div>
+  </button>
+  <nav class="tabbar">
+    <button class="tab-btn active" data-tab="hoy"><span class="ic">●</span>Hoy</button>
+    <button class="tab-btn" data-tab="cal"><span class="ic">▦</span>Calendario</button>
+    <button class="tab-btn" data-tab="prog"><span class="ic">▲</span>Progreso</button>
+    <button class="tab-btn" data-tab="cardio"><span class="ic">↝</span>Cardio</button>
+    <button class="tab-btn" data-tab="datos"><span class="ic">⇩</span>Datos</button>
+  </nav>
+</div>
 
 <div class="timer-overlay" id="timerOverlay">
   <div class="timer-card">
@@ -411,14 +443,6 @@
   </div>
 </div>
 
-<nav class="tabbar">
-  <button class="tab-btn active" data-tab="hoy"><span class="ic">●</span>Hoy</button>
-  <button class="tab-btn" data-tab="cal"><span class="ic">▦</span>Calendario</button>
-  <button class="tab-btn" data-tab="prog"><span class="ic">▲</span>Progreso</button>
-  <button class="tab-btn" data-tab="cardio"><span class="ic">↝</span>Cardio</button>
-  <button class="tab-btn" data-tab="datos"><span class="ic">⇩</span>Datos</button>
-</nav>
-
 <div class="toast" id="toast"></div>
 <div class="pr-banner" id="prBanner">
   <div class="pr-banner-inner">
@@ -433,47 +457,91 @@
 <script>
 /* ---------------- RUTINA FIJA ---------------- */
 const ROUTINE = {
-  day1: { name:"Empuje (Push) + Core", type:"strength",
+  day1: { name:"Superior Fuerza", type:"strength", focus:"Fuerza de empuje y tracción de tren superior",
+    warmup:[
+      '2 min de cardio ligero (bici o remo suave)',
+      '1 min de movilidad articular: hombros, muñecas y cuello',
+      'Circuito activación (2 vueltas): 10 air squats · 10 push-ups (o de rodillas) · 10 lunges con rotación · 15 seg plancha',
+      '2 series de aproximación con press banca: 1 ligera (50%) y 1 al 70-75% antes del peso de trabajo',
+    ],
+    notes:'Semanas 1-2: deja 2-3 reps en reserva, prioriza técnica. Semana 3 en adelante: sube peso cuando completes todas las series limpias.',
     exercises:[
-      {id:'d1e1', name:'Press de banca plano (barra/mancuernas)', kind:'strength', sets:3, target:'6-8 reps · 2 min desc.'},
-      {id:'d1e2', name:'Press militar de hombros con mancuernas', kind:'strength', sets:3, target:'8-10 reps'},
-      {id:'d1e3', name:'Fondos en paralelas / press inclinado', kind:'strength', sets:3, target:'10-12 reps'},
-      {id:'d1e4', name:'Elevaciones laterales con mancuernas', kind:'strength', sets:3, target:'12-15 reps'},
-      {id:'d1e5', name:'Plancha abdominal isométrica', kind:'iso', sets:3, target:'45 seg'},
-      {id:'d1e6', name:'Elevaciones de piernas colgado', kind:'reps', sets:3, target:'12 reps'},
+      {id:'d1e1', name:'Press banca', kind:'strength', sets:4, target:'6-8 reps · 90 seg desc.'},
+      {id:'d1e2', name:'Remo con barra', kind:'strength', sets:4, target:'6-8 reps · 90 seg desc.'},
+      {id:'d1e3', name:'Press militar con mancuerna', kind:'strength', sets:3, target:'8-10 reps · 75 seg desc.'},
+      {id:'d1e4', name:'Dominadas (o jalón asistido)', kind:'strength', sets:3, target:'8-10 reps · 75 seg desc.'},
+      {id:'d1e5', name:'Face pull', kind:'strength', sets:3, target:'12-15 reps · 60 seg desc.'},
+      {id:'d1e6', name:'Finisher — AMRAP 10 min: 10 push-ups, 15 kettlebell swings, 20 mountain climbers', kind:'count', unit:'rondas', target:'AMRAP 10 min'},
     ]},
-  day2: { name:"Híbrido / Hyrox 1 — Motor y Resistencia", type:"hybrid", rounds:"4-5 rondas · 1 min descanso entre rondas",
+  day2: { name:"Inferior Fuerza", type:"strength", focus:"Piernas, cadera y core",
+    warmup:[
+      '3 min de cardio ligero (bici o remo suave)',
+      '1 min de movilidad de cadera y tobillos',
+      'Circuito activación (2 vueltas): 10 air squats · 10 push-ups · 10 lunges con rotación · 15 seg plancha',
+      '2 series de aproximación con sentadilla: 1 ligera (50%) y 1 al 70-75% antes del peso de trabajo',
+    ],
+    notes:'Cuida la técnica de la sentadilla, sobre todo estas primeras semanas volviendo al ritmo.',
     exercises:[
-      {id:'d2e1', name:'SkiErg / Remo (500m)', kind:'time', target:'500 m'},
-      {id:'d2e2', name:'Zancadas caminando con carga', kind:'count', unit:'pasos', target:'20 pasos'},
-      {id:'d2e3', name:'Kettlebell Swings', kind:'count', unit:'reps', target:'20 reps'},
-      {id:'d2e4', name:'Burpees / Slam Balls', kind:'count', unit:'reps', target:'15 reps'},
-      {id:'d2e5', name:'Plancha con toque de hombros', kind:'count', unit:'reps', target:'30 reps'},
+      {id:'d2e1', name:'Sentadilla', kind:'strength', sets:4, target:'6-8 reps · 90 seg desc.'},
+      {id:'d2e2', name:'Peso muerto rumano', kind:'strength', sets:3, target:'8-10 reps · 90 seg desc.'},
+      {id:'d2e3', name:'Zancadas con mancuernas', kind:'strength', sets:3, target:'10 reps/pierna · 60 seg desc.'},
+      {id:'d2e4', name:'Hip thrust', kind:'strength', sets:3, target:'10-12 reps · 75 seg desc.'},
+      {id:'d2e5', name:'Plancha', kind:'iso', sets:3, target:'40 seg · 45 seg desc.'},
+      {id:'d2e6', name:'Rueda abdominal', kind:'reps', sets:3, target:'10 reps · 45 seg desc.'},
     ]},
-  day3: { name:"Fuerza — Pierna Completa", type:"strength",
+  day3: { name:"Hyrox / Metcon", type:"hybrid", focus:"Condicionamiento estilo Hyrox/CrossFit",
+    warmup:[
+      '2 min de cardio ligero (remo o bici suave) para elevar pulso',
+      '1 min de movilidad articular: cadera, tobillos y hombros',
+      'Circuito activación (2 vueltas): 10 air squats · 10 push-ups · 10 lunges con rotación · 15 seg plancha',
+      'Específico: 1-2 series ligeras de los movimientos del día (ej. 8-10 wall balls con balón ligero, empuje corto de sled sin apenas peso)',
+      '2-3 sprints/pulls cortos a intensidad creciente en el último minuto para llegar activado al bloque principal',
+    ],
+    notes:'Cierra con 5 min de enfriamiento y movilidad. Ritmo constante mejor que salir muy fuerte las primeras rondas.',
     exercises:[
-      {id:'d3e1', name:'Sentadilla libre / Búlgara con mancuernas', kind:'strength', sets:3, target:'6-8 reps'},
-      {id:'d3e2', name:'Peso muerto rumano', kind:'strength', sets:3, target:'8-10 reps'},
-      {id:'d3e3', name:'Prensa de piernas / zancadas búlgaras', kind:'strength', sets:3, target:'10-12 reps'},
-      {id:'d3e4', name:'Curl de isquios / puente de glúteos', kind:'strength', sets:3, target:'12 reps'},
-      {id:'d3e5', name:'Elevación de talones (gemelos)', kind:'strength', sets:3, target:'15-20 reps'},
+      {id:'d3e1', name:'Row 500m + 20 wall balls + 15 burpees', kind:'time', target:'4 rondas · descanso mínimo'},
+      {id:'d3e2', name:'Sled push / pull', kind:'count', unit:'kg', target:'4 x 20 m · 60 seg desc.'},
+      {id:'d3e3', name:'Farmer carry', kind:'count', unit:'kg', target:'4 x 30 m · 60 seg desc.'},
     ]},
-  day4: { name:"Tirón (Pull) + Core", type:"strength",
+  day4: { name:"Superior Hipertrofia", type:"strength", focus:"Volumen y bombeo de tren superior",
+    warmup:[
+      '3 min de cardio ligero (bici o remo suave)',
+      '1 min de movilidad de hombros y muñecas',
+      'Circuito activación (2 vueltas): 10 air squats · 10 push-ups · 10 lunges con rotación · 15 seg plancha',
+      '2 series de aproximación con press inclinado: 1 ligera y 1 al 70-75% antes del peso de trabajo',
+    ],
+    notes:'Aquí el foco es sentir el músculo trabajar, controla el tempo en la fase excéntrica.',
     exercises:[
-      {id:'d4e1', name:'Dominadas (lastradas o asistidas)', kind:'strength', sets:3, target:'6-8 reps'},
-      {id:'d4e2', name:'Remo con barra / remo en punta', kind:'strength', sets:3, target:'8-10 reps'},
-      {id:'d4e3', name:'Jalón al pecho / remo en polea baja', kind:'strength', sets:3, target:'10-12 reps'},
-      {id:'d4e4', name:'Curl de bíceps con mancuernas', kind:'strength', sets:3, target:'10-12 reps'},
-      {id:'d4e5', name:'Crunch en polea / suelo', kind:'reps', sets:3, target:'15 reps'},
-      {id:'d4e6', name:'Rueda abdominal / plancha con desplazamiento', kind:'reps', sets:3, target:'10-12 reps'},
+      {id:'d4e1', name:'Press inclinado con mancuerna', kind:'strength', sets:4, target:'10-12 reps · 60-75 seg desc.'},
+      {id:'d4e2', name:'Remo unilateral con mancuerna', kind:'strength', sets:4, target:'10-12 reps · 60-75 seg desc.'},
+      {id:'d4e3', name:'Elevaciones laterales', kind:'strength', sets:3, target:'15 reps · 45 seg desc.'},
+      {id:'d4e4', name:'Curl de bíceps', kind:'strength', sets:3, target:'12 reps · 45 seg desc.'},
+      {id:'d4e5', name:'Extensión de tríceps', kind:'strength', sets:3, target:'12 reps · 45 seg desc.'},
+      {id:'d4e6', name:'Finisher — EMOM 8 min: 8 burpees cada minuto', kind:'count', unit:'min completados', target:'EMOM 8 min'},
     ]},
-  day5: { name:"Híbrido / Hyrox 2 — Potencia y Estaciones", type:"hybrid", rounds:"EMOM 20 min · 5 ciclos de 4 min",
+  day5: { name:"Hyrox + Inferior Funcional", type:"hybrid", focus:"Cierre de semana: piernas funcionales + condicionamiento",
+    warmup:[
+      '2 min de cardio ligero (remo o bici suave)',
+      '1 min de movilidad articular: cadera, tobillos y hombros',
+      'Circuito activación (2 vueltas): 10 air squats · 10 push-ups · 10 lunges con rotación · 15 seg plancha',
+      'Específico: 1-2 series ligeras (ej. step-ups o box jumps suaves, kettlebell swings con peso bajo)',
+      '2-3 sprints/pulls cortos a intensidad creciente antes de empezar el metcón',
+    ],
+    notes:'Cierra la semana con calidad, no cantidad — si notas fatiga acumulada, baja intensidad del metcón.',
     exercises:[
-      {id:'d5e1', name:'Bici de aire / Remo', kind:'count', unit:'cal', target:'12-15 cal'},
-      {id:'d5e2', name:'Wall Balls / Thrusters ligeros', kind:'count', unit:'reps', target:'12 reps'},
-      {id:'d5e3', name:'Arrastre de trineo / Farmer carry', kind:'time', target:'15 metros'},
+      {id:'d5e1', name:'Sentadilla goblet', kind:'strength', sets:3, target:'12 reps · 60 seg desc.'},
+      {id:'d5e2', name:'Peso muerto sumo', kind:'strength', sets:3, target:'8 reps · 90 seg desc.'},
+      {id:'d5e3', name:'400m carrera/remo + 15 box jumps o step-ups + 12 kettlebell swings', kind:'time', target:'3 rondas'},
+      {id:'d5e4', name:'Abdominales bicicleta', kind:'reps', sets:3, target:'20 reps · 45 seg desc.'},
     ]},
 };
+const GENERAL_NOTES = [
+  'Descanso: 60-90 seg en ejercicios de fuerza, mínimo posible en metcones/finishers.',
+  'Progresión: semanas 1-2 con volumen moderado (venías de un parón); desde la semana 3 sube peso/intensidad progresivamente.',
+  'Nutrición objetivo: ~2350-2450 kcal/día · 155-160 g de proteína · 70-80 g de grasa · resto en carbohidratos.',
+  'Hidratación: especialmente importante en los días de Hyrox/metcon.',
+  'Si en 3-4 semanas no hay cambios en peso/cintura, ajustar calorías 100-150 kcal hacia abajo.',
+];
 const DAY_KEYS = ['day1','day2','day3','day4','day5'];
 
 /* ---------------- ESTADO Y ALMACENAMIENTO ---------------- */
@@ -607,17 +675,13 @@ function renderDayForm(dayKey){
   const wrap = document.getElementById('dayForm');
   let html = '';
   html += `<div class="day-header"><h3>${r.name}</h3><span class="tag ${r.type==='strength'?'strength':'hybrid'}">${r.type==='strength'?'Fuerza':'Híbrido'}</span></div>`;
-  if(r.rounds) html += `<div class="day-meta">${r.rounds}</div>`;
+  if(r.focus) html += `<div class="day-meta">${r.focus}</div>`;
 
-  if(r.type==='hybrid'){
-    const mRounds = existing && existing.meta ? existing.meta.rounds : '';
-    const mTime = existing && existing.meta ? existing.meta.totalTime : '';
-    html += `<div class="exercise" style="border-top:none; padding-top:0;">
-      <div class="row">
-        <div><label class="field-label">Rondas completadas</label><input type="number" id="meta_rounds" value="${mRounds||''}" placeholder="5"></div>
-        <div><label class="field-label">Tiempo total (mm:ss)</label><input type="text" id="meta_time" value="${mTime||''}" placeholder="18:40"></div>
-      </div>
-    </div>`;
+  if(r.warmup && r.warmup.length){
+    html += `<details class="warmup">
+      <summary>Calentamiento (${r.warmup.length} pasos)</summary>
+      <ul>${r.warmup.map(w=>`<li>${w}</li>`).join('')}</ul>
+    </details>`;
   }
 
   r.exercises.forEach(ex=>{
@@ -677,6 +741,10 @@ function renderDayForm(dayKey){
     html += `</div>`;
   });
 
+  if(r.notes){
+    html += `<div class="day-notes">💡 ${r.notes}</div>`;
+  }
+
   wrap.innerHTML = html;
   document.getElementById('deleteBtn').style.display = existing ? 'block' : 'none';
 }
@@ -711,13 +779,7 @@ function collectFormIntoSession(){
       if(v && v.value.trim()!=='') exercisesOut[ex.id] = {time: v.value.trim()};
     }
   });
-  let meta = null;
-  if(r.type==='hybrid'){
-    const mr = document.getElementById('meta_rounds');
-    const mt = document.getElementById('meta_time');
-    meta = {rounds: mr&&mr.value? Number(mr.value):null, totalTime: mt&&mt.value? mt.value.trim():null};
-  }
-  return {dayKey, exercises: exercisesOut, meta};
+  return {dayKey, exercises: exercisesOut};
 }
 
 document.getElementById('saveBtn').addEventListener('click', async ()=>{
@@ -768,30 +830,7 @@ function openDateInHoy(dateStr){
 
 /* ---------------- RACHA ---------------- */
 function updateStreak(){
-  let streak = 0;
-  let d = new Date();
-  let dStr = todayStr();
-  if(!sessions[dStr]){
-    d.setDate(d.getDate()-1);
-    dStr = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-  }
-  while(sessions[dStr]){
-    streak++;
-    d.setDate(d.getDate()-1);
-    dStr = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-  }
-  document.getElementById('streakNum').textContent = streak;
-  const platesWrap = document.getElementById('plates');
-  platesWrap.innerHTML='';
-  const n = Math.min(streak, 10);
-  for(let i=0;i<Math.max(n,1);i++){
-    const p = document.createElement('div');
-    p.className='plate';
-    const h = 6 + Math.min(i, n)*1.4;
-    p.style.height = (i<n ? h : 4)+'px';
-    p.style.opacity = i<n ? 1 : 0.25;
-    platesWrap.appendChild(p);
-  }
+  /* el indicador de racha en la cabecera se ha quitado a petición del usuario */
 }
 
 /* ---------------- CALENDARIO ---------------- */
@@ -838,9 +877,6 @@ function showCalDetail(dateStr){
   }
   const r = ROUTINE[s.dayKey];
   let html = `<div class="day-header"><h3 style="font-size:18px;">${fmtDateHuman(dateStr)}</h3><span class="tag ${r.type==='strength'?'strength':'hybrid'}">${r.name}</span></div>`;
-  if(s.meta && (s.meta.rounds||s.meta.totalTime)){
-    html += `<div class="day-meta">Rondas: ${s.meta.rounds||'-'} · Tiempo total: ${s.meta.totalTime||'-'}</div>`;
-  }
   r.exercises.forEach(ex=>{
     const d = s.exercises[ex.id];
     if(!d) return;
@@ -1131,13 +1167,20 @@ function updateTimerDisplay(){
   ring.style.strokeDasharray = RING_CIRC;
   ring.style.strokeDashoffset = RING_CIRC*(1-frac);
   ring.style.stroke = frac>0.5 ? '#2f8f82' : (frac>0.2 ? '#c9a15a' : '#c1442b');
-  const fab = document.getElementById('restFab');
+  const bar = document.getElementById('restBar');
+  const barValue = document.getElementById('restBarValue');
+  const barFill = document.getElementById('restBarFill');
+  barFill.style.width = (frac*100)+'%';
+  barFill.style.background = frac>0.5 ? '#2f8f82' : (frac>0.2 ? '#c9a15a' : '#c1442b');
   if(timerRunning){
-    fab.classList.add('running');
-    fab.textContent = secToTimeStr(timerRemaining);
+    bar.classList.add('running');
+    barValue.textContent = secToTimeStr(timerRemaining).replace(/^(\d):/,'0$1:') + ' restantes';
+  } else if(timerRemaining<=0 && timerRemaining!==timerDuration){
+    bar.classList.remove('running');
+    barValue.textContent = 'Descanso terminado · toca para repetir';
   } else {
-    fab.classList.remove('running');
-    fab.textContent = '⏱';
+    bar.classList.remove('running');
+    barValue.textContent = 'Toca para iniciar (' + (timerDuration<60? timerDuration+'s' : (timerDuration/60)+' min') + ')';
   }
 }
 function beep(){
@@ -1189,7 +1232,7 @@ document.getElementById('timerReset').addEventListener('click', ()=>{
   document.getElementById('timerStartPause').textContent = 'Iniciar';
   updateTimerDisplay();
 });
-document.getElementById('restFab').addEventListener('click', ()=>{
+document.getElementById('restBar').addEventListener('click', ()=>{
   document.getElementById('timerOverlay').classList.add('show');
 });
 document.getElementById('closeTimer').addEventListener('click', ()=>{
@@ -1292,6 +1335,7 @@ async function init(){
   document.getElementById('sessionDateHuman').textContent = fmtDateHuman(currentDate);
   document.getElementById('cardioDate').value = currentCardioDate;
   document.getElementById('bwDate').value = todayStr();
+  document.getElementById('generalNotesList').innerHTML = GENERAL_NOTES.map(n=>`<div class="hist-row" style="display:block; padding:8px 0;">${n}</div>`).join('');
   selectDay(guessDayForDate(currentDate));
   updateStreak();
   renderPresets();
@@ -1301,4 +1345,3 @@ init();
 </script>
 </body>
 </html>
-
