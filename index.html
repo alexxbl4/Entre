@@ -380,7 +380,7 @@
 
   <!-- DATOS / EXPORTAR -->
   <section class="tabview" id="tab-datos">
-    <div class="card">
+    <div class="card" id="generalNotesCard">
       <div class="section-title">Notas generales del programa</div>
       <div id="generalNotesList"></div>
     </div>
@@ -457,92 +457,47 @@
 <script>
 /* ---------------- RUTINA FIJA ---------------- */
 const ROUTINE = {
-  day1: { name:"Superior Fuerza", type:"strength", focus:"Fuerza de empuje y tracción de tren superior",
-    warmup:[
-      '2 min de cardio ligero (bici o remo suave)',
-      '1 min de movilidad articular: hombros, muñecas y cuello',
-      'Circuito activación (2 vueltas): 10 air squats · 10 push-ups (o de rodillas) · 10 lunges con rotación · 15 seg plancha',
-      '2 series de aproximación con press banca: 1 ligera (50%) y 1 al 70-75% antes del peso de trabajo',
-    ],
-    notes:'Semanas 1-2: deja 2-3 reps en reserva, prioriza técnica. Semana 3 en adelante: sube peso cuando completes todas las series limpias.',
+  day1: { code:'A', name:"Torso Fuerza", type:"strength",
     exercises:[
-      {id:'d1e1', name:'Press banca', kind:'strength', sets:4, target:'6-8 reps · 90 seg desc.'},
-      {id:'d1e2', name:'Remo con barra', kind:'strength', sets:4, target:'6-8 reps · 90 seg desc.'},
-      {id:'d1e3', name:'Press militar con mancuerna', kind:'strength', sets:3, target:'8-10 reps · 75 seg desc.'},
-      {id:'d1e4', name:'Dominadas (o jalón asistido)', kind:'strength', sets:3, target:'8-10 reps · 75 seg desc.'},
-      {id:'d1e5', name:'Face pull', kind:'strength', sets:3, target:'12-15 reps · 60 seg desc.'},
-      {id:'d1e6', name:'Finisher — AMRAP 10 min: 10 push-ups, 15 kettlebell swings, 20 mountain climbers', kind:'count', unit:'rondas', target:'AMRAP 10 min'},
+      {id:'a1', name:'Press banca inclinado', kind:'strength', sets:3, target:'5-6 reps'},
+      {id:'a2', name:'Press banca normal', kind:'strength', sets:3, target:'4-6 reps'},
+      {id:'a3', name:'Jalón al pecho', kind:'strength', sets:3, target:'6-8 reps'},
+      {id:'a4', name:'Remo para espalda alta', kind:'strength', sets:3, target:'6-8 reps'},
+      {id:'a5', name:'Elevaciones laterales en polea', kind:'strength', sets:4, target:'10-15 reps'},
+      {id:'a6', name:'Curl banca inclinado', kind:'strength', sets:2, target:'8-10 reps'},
+      {id:'a7', name:'Extensiones de tríceps por encima de la cabeza en polea', kind:'strength', sets:2, target:'8-10 reps'},
     ]},
-  day2: { name:"Inferior Fuerza", type:"strength", focus:"Piernas, cadera y core",
-    warmup:[
-      '3 min de cardio ligero (bici o remo suave)',
-      '1 min de movilidad de cadera y tobillos',
-      'Circuito activación (2 vueltas): 10 air squats · 10 push-ups · 10 lunges con rotación · 15 seg plancha',
-      '2 series de aproximación con sentadilla: 1 ligera (50%) y 1 al 70-75% antes del peso de trabajo',
-    ],
-    notes:'Cuida la técnica de la sentadilla, sobre todo estas primeras semanas volviendo al ritmo.',
+  day2: { code:'B', name:"Pierna Fuerza", type:"strength",
     exercises:[
-      {id:'d2e1', name:'Sentadilla', kind:'strength', sets:4, target:'6-8 reps · 90 seg desc.'},
-      {id:'d2e2', name:'Peso muerto rumano', kind:'strength', sets:3, target:'8-10 reps · 90 seg desc.'},
-      {id:'d2e3', name:'Zancadas con mancuernas', kind:'strength', sets:3, target:'10 reps/pierna · 60 seg desc.'},
-      {id:'d2e4', name:'Hip thrust', kind:'strength', sets:3, target:'10-12 reps · 75 seg desc.'},
-      {id:'d2e5', name:'Plancha', kind:'iso', sets:3, target:'40 seg · 45 seg desc.'},
-      {id:'d2e6', name:'Rueda abdominal', kind:'reps', sets:3, target:'10 reps · 45 seg desc.'},
+      {id:'b1', name:'Sentadilla', kind:'strength', sets:3, target:'4-6 reps'},
+      {id:'b2', name:'Extensiones de cuádriceps', kind:'strength', sets:3, target:'8-10 reps'},
+      {id:'b3', name:'Hip thrust', kind:'strength', sets:3, target:'5-8 reps'},
+      {id:'b4', name:'Curl femoral sentado', kind:'strength', sets:3, target:'8-10 reps'},
+      {id:'b5', name:'Gemelos', kind:'strength', sets:2, target:'8-10 reps'},
+      {id:'b6', name:'Abdominal', kind:'strength', sets:3, target:'10-15 reps'},
     ]},
-  day3: { name:"Hyrox / Metcon", type:"hybrid", focus:"Condicionamiento estilo Hyrox/CrossFit",
-    warmup:[
-      '2 min de cardio ligero (remo o bici suave) para elevar pulso',
-      '1 min de movilidad articular: cadera, tobillos y hombros',
-      'Circuito activación (2 vueltas): 10 air squats · 10 push-ups · 10 lunges con rotación · 15 seg plancha',
-      'Específico: 1-2 series ligeras de los movimientos del día (ej. 8-10 wall balls con balón ligero, empuje corto de sled sin apenas peso)',
-      '2-3 sprints/pulls cortos a intensidad creciente en el último minuto para llegar activado al bloque principal',
-    ],
-    notes:'Cierra con 5 min de enfriamiento y movilidad. Ritmo constante mejor que salir muy fuerte las primeras rondas.',
+  day3: { code:'C', name:"Torso Hipertrofia", type:"strength",
     exercises:[
-      {id:'d3e1', name:'Row 500m + 20 wall balls + 15 burpees', kind:'time', target:'4 rondas · descanso mínimo'},
-      {id:'d3e2', name:'Sled push / pull', kind:'count', unit:'kg', target:'4 x 20 m · 60 seg desc.'},
-      {id:'d3e3', name:'Farmer carry', kind:'count', unit:'kg', target:'4 x 30 m · 60 seg desc.'},
+      {id:'c1', name:'Press inclinado', kind:'strength', sets:3, target:'8-10 reps'},
+      {id:'c2', name:'Aperturas en máquina', kind:'strength', sets:3, target:'10-15 reps'},
+      {id:'c3', name:'Remo con agarre cerrado', kind:'strength', sets:4, target:'8-10 reps'},
+      {id:'c4', name:'Remo con agarre abierto', kind:'strength', sets:4, target:'10-12 reps'},
+      {id:'c5', name:'Elevaciones laterales en polea', kind:'strength', sets:5, target:'12-15 reps'},
+      {id:'c6', name:'Curl predicador', kind:'strength', sets:3, target:'10-12 reps'},
+      {id:'c7', name:'Extensiones de tríceps', kind:'strength', sets:3, target:'10-12 reps'},
     ]},
-  day4: { name:"Superior Hipertrofia", type:"strength", focus:"Volumen y bombeo de tren superior",
-    warmup:[
-      '3 min de cardio ligero (bici o remo suave)',
-      '1 min de movilidad de hombros y muñecas',
-      'Circuito activación (2 vueltas): 10 air squats · 10 push-ups · 10 lunges con rotación · 15 seg plancha',
-      '2 series de aproximación con press inclinado: 1 ligera y 1 al 70-75% antes del peso de trabajo',
-    ],
-    notes:'Aquí el foco es sentir el músculo trabajar, controla el tempo en la fase excéntrica.',
+  day4: { code:'D', name:"Pierna Hipertrofia", type:"strength",
     exercises:[
-      {id:'d4e1', name:'Press inclinado con mancuerna', kind:'strength', sets:4, target:'10-12 reps · 60-75 seg desc.'},
-      {id:'d4e2', name:'Remo unilateral con mancuerna', kind:'strength', sets:4, target:'10-12 reps · 60-75 seg desc.'},
-      {id:'d4e3', name:'Elevaciones laterales', kind:'strength', sets:3, target:'15 reps · 45 seg desc.'},
-      {id:'d4e4', name:'Curl de bíceps', kind:'strength', sets:3, target:'12 reps · 45 seg desc.'},
-      {id:'d4e5', name:'Extensión de tríceps', kind:'strength', sets:3, target:'12 reps · 45 seg desc.'},
-      {id:'d4e6', name:'Finisher — EMOM 8 min: 8 burpees cada minuto', kind:'count', unit:'min completados', target:'EMOM 8 min'},
-    ]},
-  day5: { name:"Hyrox + Inferior Funcional", type:"hybrid", focus:"Cierre de semana: piernas funcionales + condicionamiento",
-    warmup:[
-      '2 min de cardio ligero (remo o bici suave)',
-      '1 min de movilidad articular: cadera, tobillos y hombros',
-      'Circuito activación (2 vueltas): 10 air squats · 10 push-ups · 10 lunges con rotación · 15 seg plancha',
-      'Específico: 1-2 series ligeras (ej. step-ups o box jumps suaves, kettlebell swings con peso bajo)',
-      '2-3 sprints/pulls cortos a intensidad creciente antes de empezar el metcón',
-    ],
-    notes:'Cierra la semana con calidad, no cantidad — si notas fatiga acumulada, baja intensidad del metcón.',
-    exercises:[
-      {id:'d5e1', name:'Sentadilla goblet', kind:'strength', sets:3, target:'12 reps · 60 seg desc.'},
-      {id:'d5e2', name:'Peso muerto sumo', kind:'strength', sets:3, target:'8 reps · 90 seg desc.'},
-      {id:'d5e3', name:'400m carrera/remo + 15 box jumps o step-ups + 12 kettlebell swings', kind:'time', target:'3 rondas'},
-      {id:'d5e4', name:'Abdominales bicicleta', kind:'reps', sets:3, target:'20 reps · 45 seg desc.'},
+      {id:'d1', name:'Hip thrust', kind:'strength', sets:4, target:'8-12 reps'},
+      {id:'d2', name:'Curl femoral sentado', kind:'strength', sets:4, target:'10-12 reps'},
+      {id:'d3', name:'Sentadilla', kind:'strength', sets:3, target:'8-10 reps'},
+      {id:'d4', name:'Extensiones de cuádriceps', kind:'strength', sets:3, target:'10-15 reps'},
+      {id:'d5', name:'Gemelos', kind:'strength', sets:3, target:'10-15 reps'},
+      {id:'d6', name:'Abdominal', kind:'strength', sets:3, target:'10-15 reps'},
     ]},
 };
-const GENERAL_NOTES = [
-  'Descanso: 60-90 seg en ejercicios de fuerza, mínimo posible en metcones/finishers.',
-  'Progresión: semanas 1-2 con volumen moderado (venías de un parón); desde la semana 3 sube peso/intensidad progresivamente.',
-  'Nutrición objetivo: ~2350-2450 kcal/día · 155-160 g de proteína · 70-80 g de grasa · resto en carbohidratos.',
-  'Hidratación: especialmente importante en los días de Hyrox/metcon.',
-  'Si en 3-4 semanas no hay cambios en peso/cintura, ajustar calorías 100-150 kcal hacia abajo.',
-];
-const DAY_KEYS = ['day1','day2','day3','day4','day5'];
+const GENERAL_NOTES = [];
+const DAY_KEYS = ['day1','day2','day3','day4'];
 
 /* ---------------- ESTADO Y ALMACENAMIENTO ---------------- */
 let sessions = {};
@@ -633,7 +588,7 @@ function isBetter(kind, newVal, refVal){
 function guessDayForDate(dateStr){
   const [y,m,d] = dateStr.split('-').map(Number);
   const wd = new Date(y,m-1,d).getDay();
-  const map = {1:'day1',2:'day2',3:'day3',4:'day4',5:'day5'};
+  const map = {1:'day1',2:'day2',3:'day3',4:'day4'};
   return map[wd] || 'day1';
 }
 function renderDayPicker(selectedKey){
@@ -643,7 +598,7 @@ function renderDayPicker(selectedKey){
     const r = ROUTINE[k];
     const pill = document.createElement('div');
     pill.className = 'day-pill' + (k===selectedKey ? ' active '+ (r.type==='strength'?'strength':'hybrid') : '');
-    pill.textContent = 'Día '+(i+1);
+    pill.textContent = 'Día '+r.code;
     pill.onclick = ()=>{ selectDay(k); };
     wrap.appendChild(pill);
   });
@@ -906,7 +861,7 @@ function buildExerciseOptions(){
   sel.innerHTML='';
   DAY_KEYS.forEach((dk,i)=>{
     const grp = document.createElement('optgroup');
-    grp.label = 'Día '+(i+1)+' — '+ROUTINE[dk].name;
+    grp.label = 'Día '+ROUTINE[dk].code+' — '+ROUTINE[dk].name;
     ROUTINE[dk].exercises.forEach(ex=>{
       const opt = document.createElement('option');
       opt.value = ex.id; opt.textContent = ex.name;
@@ -1335,6 +1290,7 @@ async function init(){
   document.getElementById('sessionDateHuman').textContent = fmtDateHuman(currentDate);
   document.getElementById('cardioDate').value = currentCardioDate;
   document.getElementById('bwDate').value = todayStr();
+  document.getElementById('generalNotesCard').style.display = GENERAL_NOTES.length ? 'block' : 'none';
   document.getElementById('generalNotesList').innerHTML = GENERAL_NOTES.map(n=>`<div class="hist-row" style="display:block; padding:8px 0;">${n}</div>`).join('');
   selectDay(guessDayForDate(currentDate));
   updateStreak();
