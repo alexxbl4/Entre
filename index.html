@@ -150,6 +150,13 @@
   }
   .set-row input{ flex:1; min-width:0; width:auto; }
   .prev-hint{ font-size:10.5px; color:#6b6259; margin:-4px 0 8px 32px;}
+  .exercise-insights{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+  .insight-chip{ font-size:10.5px; font-weight:700; padding:4px 9px; border-radius:20px; border:1px solid; letter-spacing:0.01em; }
+  .insight-chip.prevchip{ color:var(--text-dim); background:var(--surface-2); border-color:var(--line); }
+  .insight-chip.bestchip{ color:#1c1917; background:linear-gradient(135deg,var(--gold-soft),var(--gold)); border-color:transparent; }
+  .ex-note{ margin-top:2px; font-size:12.5px !important; font-weight:500 !important; background:transparent !important; border:1px dashed var(--line) !important; box-shadow:none !important; padding:9px 10px !important; }
+  .ex-note::placeholder{ color:#6b6259; }
+  .ex-note:focus{ border-style:solid !important; }
   .pr-chip{ font-size:9.5px; font-weight:800; color:#1c1917; background:linear-gradient(135deg,var(--gold-soft),var(--gold)); padding:2px 7px; border-radius:6px; letter-spacing:0.03em; box-shadow:0 2px 6px rgba(201,161,90,0.4); }
 
   .save-btn, .btn{
@@ -668,6 +675,40 @@ function isBetter(kind, newVal, refVal){
   if(refVal==null) return false;
   return kind==='time' ? newVal < refVal : newVal > refVal;
 }
+function formatSetsSummary(exData, ex){
+  if(!exData) return null;
+  if(ex.kind==='strength'){
+    const s=(exData.sets||[]).filter(x=>x.weight!=null||x.reps!=null);
+    if(!s.length) return null;
+    return s.map(x=>`${x.weight??'-'}kg×${x.reps??'-'}`).join(' · ');
+  }
+  if(ex.kind==='iso'){
+    const s=(exData.sets||[]).filter(x=>x.seconds!=null);
+    if(!s.length) return null;
+    return s.map(x=>`${x.seconds}s`).join(' · ');
+  }
+  if(ex.kind==='reps'){
+    const s=(exData.sets||[]).filter(x=>x.reps!=null);
+    if(!s.length) return null;
+    return s.map(x=>`${x.reps}`).join(' · ');
+  }
+  if(ex.kind==='count'){
+    return exData.value!=null ? `${exData.value} ${ex.unit||''}`.trim() : null;
+  }
+  if(ex.kind==='time'){
+    return exData.time || null;
+  }
+  return null;
+}
+function formatBestSummary(best, ex){
+  if(best==null) return null;
+  if(ex.kind==='strength') return best+' kg';
+  if(ex.kind==='iso') return best+' seg';
+  if(ex.kind==='reps') return best+' reps';
+  if(ex.kind==='count') return (best+' '+(ex.unit||'')).trim();
+  if(ex.kind==='time') return secToTimeStr(best);
+  return String(best);
+}
 
 /* ---------------- HOY: selector de día ---------------- */
 function guessDayForDate(dateStr){
@@ -732,6 +773,14 @@ function renderDayForm(dayKey){
     const targetChips = ex.target.split(' · ').map(t=>`<span class="target-chip">${t}</span>`).join('');
     html += `<div class="exercise"><div class="exercise-name">${ex.name} ${isPR? '<span class="pr-chip">PR</span>':''}</div><div class="exercise-target">${targetChips}</div>`;
     const prev = lastValueFor(ex.id);
+    const prevSummary = formatSetsSummary(prev, ex);
+    const bestSummary = formatBestSummary(best, ex);
+    if(prevSummary || bestSummary){
+      html += `<div class="exercise-insights">`;
+      if(prevSummary) html += `<span class="insight-chip prevchip">↺ Ant. ${prevSummary}</span>`;
+      if(bestSummary) html += `<span class="insight-chip bestchip">🏆 Máx ${bestSummary}</span>`;
+      html += `</div>`;
+    }
 
     if(ex.kind==='strength'){
       for(let s=1;s<=ex.sets;s++){
@@ -779,6 +828,8 @@ function renderDayForm(dayKey){
       </div>`;
       if(prevHint) html += `<div class="prev-hint">${prevHint}</div>`;
     }
+    const noteVal = exData && exData.note ? exData.note.replace(/"/g,'&quot;') : '';
+    html += `<input type="text" class="ex-note" data-ex="${ex.id}" placeholder="Nota (opcional)" value="${noteVal}">`;
     html += `</div>`;
   });
 
@@ -795,6 +846,7 @@ function collectFormIntoSession(){
   const r = ROUTINE[dayKey];
   const exercisesOut = {};
   r.exercises.forEach(ex=>{
+    let entry = null;
     if(ex.kind==='strength' || ex.kind==='iso' || ex.kind==='reps'){
       const sets = [];
       for(let s=0;s<ex.sets;s++){
@@ -811,14 +863,21 @@ function collectFormIntoSession(){
         }
       }
       const hasData = sets.some(s=>Object.values(s).some(v=>v!==null && v!==undefined));
-      if(hasData) exercisesOut[ex.id] = {sets};
+      if(hasData) entry = {sets};
     } else if(ex.kind==='count'){
       const v = document.querySelector(`.ex-input[data-ex="${ex.id}"][data-field="value"]`);
-      if(v && v.value!=='') exercisesOut[ex.id] = {value: Number(v.value)};
+      if(v && v.value!=='') entry = {value: Number(v.value)};
     } else if(ex.kind==='time'){
       const v = document.querySelector(`.ex-input[data-ex="${ex.id}"][data-field="time"]`);
-      if(v && v.value.trim()!=='') exercisesOut[ex.id] = {time: v.value.trim()};
+      if(v && v.value.trim()!=='') entry = {time: v.value.trim()};
     }
+    const noteEl = document.querySelector(`.ex-note[data-ex="${ex.id}"]`);
+    const noteVal = noteEl && noteEl.value.trim() ? noteEl.value.trim() : '';
+    if(noteVal){
+      if(!entry) entry = {};
+      entry.note = noteVal;
+    }
+    if(entry) exercisesOut[ex.id] = entry;
   });
   return {dayKey, exercises: exercisesOut};
 }
@@ -930,7 +989,8 @@ function showCalDetail(dateStr){
       }).join(' · ');
     } else if(d.value!==undefined){ val = d.value+' '+(ex.unit||''); }
     else if(d.time!==undefined){ val = d.time; }
-    html += `<div class="hist-row"><span>${ex.name}</span><span class="mono">${val}</span></div>`;
+    html += `<div class="hist-row"><span>${ex.name}</span><span class="mono">${val||'—'}</span></div>`;
+    if(d.note) html += `<div class="prev-hint" style="margin-left:0;">📝 ${d.note}</div>`;
   });
   html += `<button class="btn small" style="margin-top:12px;" id="editThis">Editar esta sesión</button>`;
   detail.innerHTML = html;
